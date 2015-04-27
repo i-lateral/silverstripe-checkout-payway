@@ -6,7 +6,7 @@ class PayWay extends PaymentMethod {
 
     public $Title = 'PayWay';
     
-    public $Icon = 'checkout-payway/images/payway-small.png';
+    public $Icon = '';
 
     private static $db = array(
         "EncryptionKey" => "Varchar(255)",
