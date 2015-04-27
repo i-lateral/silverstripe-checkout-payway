@@ -3,7 +3,7 @@
   "description": "Silverstripe module that add's payway support to the chackout module",
     "type": "silverstripe-module",
     "homepage": "http://github.com/i-lateral/silverstripe-checkout",
-    "keywords": ["silverstripe", "commerce", "ecommerce", "checkout", "cart", 'payway'],
+    "keywords": ["silverstripe", "commerce", "ecommerce", "checkout","payments", "payway"],
     "license": "BSD-3-Clause",
     "authors": [
         {
