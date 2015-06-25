@@ -36,7 +36,7 @@ class PayWayHandler extends PaymentHandler {
         $cart = ShoppingCart::get();
         $key = $this->payment_gateway->ConfigKey;
         
-        $merchant_id = (Director::isDev()) ? "TEST" : $site->Title;
+        $merchant_id = (Director::isDev()) ? "TEST" : $this->payment_gateway->MerchantID;
         
         $callback_url = Controller::join_links(
             Director::absoluteBaseURL(),

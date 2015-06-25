@@ -11,6 +11,7 @@ class PayWay extends PaymentMethod {
     private static $db = array(
         "EncryptionKey" => "Varchar(255)",
         "BillerCode" => "Varchar(99)",
+        "MerchantID" => "Varchar(99)",
         "Username" => "Varchar(99)",
         "Password" => "Varchar(99)",
         "PaymentReplyEmail" => "Varchar(99)"
@@ -25,6 +26,7 @@ class PayWay extends PaymentMethod {
                 array(
                     TextField::create('EncryptionKey'),
                     TextField::create('BillerCode'),
+                    TextField::create('MerchantID'),
                     TextField::create('Username'),
                     TextField::create('Password'),
                     TextField::create('PaymentReplyEmail', "Email used for failed payment replies")
