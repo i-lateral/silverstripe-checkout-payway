@@ -1,0 +1,8 @@
+en:
+  PayWay:
+    PLURALNAME: 'Pay Waies'
+    PaymentReferenceText: 'Order Number'
+    SINGULARNAME: 'Pay Way'
+    Tax: Tax
+    UnableToPay: 'Unable to take payment'
+    UnableToPayContent: 'Please return to the previous page and try again'
