@@ -1,6 +1,7 @@
 <?php
 
-class PayWay extends PaymentMethod {
+class PayWay extends PaymentMethod
+{
     
     public static $handler = "PayWayHandler";
 
@@ -17,10 +18,11 @@ class PayWay extends PaymentMethod {
         "PaymentReplyEmail" => "Varchar(99)"
     );
 
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCMSFields();
 
-        if($this->ID) {
+        if ($this->ID) {
             $fields->addFieldsToTab(
                 "Root.Main",
                 array(
@@ -37,12 +39,12 @@ class PayWay extends PaymentMethod {
         return $fields;
     }
 
-    public function onBeforeWrite() {
+    public function onBeforeWrite()
+    {
         parent::onBeforeWrite();
 
         $this->CallBackSlug = (!$this->CallBackSlug) ? 'PayWay' : $this->CallBackSlug;
 
         $this->Summary = (!$this->Summary) ? "Pay with credit/debit card securely via PayWay" : $this->Summary;
     }
-    
 }
