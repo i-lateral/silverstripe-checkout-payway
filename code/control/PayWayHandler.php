@@ -1,6 +1,7 @@
 <?php
 
-class PayWayHandler extends PaymentHandler {
+class PayWayHandler extends PaymentHandler
+{
     
     /**
      * URL of the PayWay gateway
@@ -27,8 +28,8 @@ class PayWayHandler extends PaymentHandler {
     private static $certs_file = 'checkout-payway/certs/cacerts.crt';
     
 
-    public function index($request) {
-        
+    public function index($request)
+    {
         $this->extend("onBeforeIndex");
         
         $site = SiteConfig::current_site_config();
@@ -64,7 +65,7 @@ class PayWayHandler extends PaymentHandler {
             'biller_code' => $this->payment_gateway->BillerCode,
             'merchant_id' => $merchant_id,
             'receipt_address' => $order->Email,
-            'payment_amount' => number_format($cart->TotalCost,2),
+            'payment_amount' => number_format($cart->TotalCost, 2),
             'payment_reference' => $order->OrderNumber,
             'payment_reference_minimum_length' => 10,
             'payment_reference_maximum_length' => 20,
@@ -75,16 +76,16 @@ class PayWayHandler extends PaymentHandler {
             'reply_link_post_type' => 'extended'
         );
 
-        foreach($cart->getItems() as $item) {
-            $payment_details[$item->Title] = $item->Quantity . ',' . number_format($item->Price,2);
+        foreach ($cart->getItems() as $item) {
+            $payment_details[$item->Title] = $item->Quantity . ',' . number_format($item->Price, 2);
         }
         
-        if(!Checkout::config()->simple_checkout) {
+        if (!Checkout::config()->simple_checkout) {
             $payment_details[$order->PostageType] = number_format($cart->PostageCost, 2);
         }
         
         // Add tax (if needed) else just total
-        if($cart->TaxCost) {
+        if ($cart->TaxCost) {
             $payment_details[_t("PayWay.Tax", 'Tax')] = number_format($cart->TaxCost, 2);
         }
         
@@ -124,8 +125,8 @@ class PayWayHandler extends PaymentHandler {
     /**
      * Process the callback data from the payment provider
      */
-    public function callback($request) {
-        
+    public function callback($request)
+    {
         $this->extend("onBeforeCallback");
         
         $data = $this->request->postVars();
@@ -134,7 +135,7 @@ class PayWayHandler extends PaymentHandler {
         $payment_id = 0;
         $gateway_data = array();
         
-        if(
+        if (
             isset($data) &&
             array_key_exists('cd_supplier_business', $data) &&
             array_key_exists('cd_summary', $data) &&
@@ -145,11 +146,12 @@ class PayWayHandler extends PaymentHandler {
         ) {
             
             // Are our credentials correct
-            if($data['cd_supplier_business'] != $this->payment_gateway->Username)
+            if ($data['cd_supplier_business'] != $this->payment_gateway->Username) {
                 return $this->httpError(500);
+            }
             
             // Check Payment status
-            switch($data['cd_summary']) {
+            switch ($data['cd_summary']) {
                 case '0':
                     $status = "paid";
                     break;
@@ -171,9 +173,9 @@ class PayWayHandler extends PaymentHandler {
                 "ResponseDesc" => $data["tx_response"],
                 "RecieptNo" => $data["no_receipt"]
             );
-            
-        } else
+        } else {
             return $this->httpError(500);
+        }
         
         $payment_data = ArrayData::array_to_object(array(
             "OrderID" => $order_id,
@@ -195,7 +197,8 @@ class PayWayHandler extends PaymentHandler {
      * 
      * @return String
      */
-    private function get_token($parameters) {
+    private function get_token($parameters)
+    {
         $certs_file = Controller::join_links(
             BASE_PATH,
             $this->config()->certs_file
@@ -206,36 +209,39 @@ class PayWayHandler extends PaymentHandler {
 
         $ch = curl_init(Controller::join_links($payway_url, "RequestToken"));
 
-        if ( $port != 443 ) curl_setopt($ch, CURLOPT_PORT, $port );
+        if ($port != 443) {
+            curl_setopt($ch, CURLOPT_PORT, $port);
+        }
 
-        curl_setopt($ch, CURLOPT_FAILONERROR, true );
-        curl_setopt($ch, CURLOPT_FORBID_REUSE, true );
-        curl_setopt($ch, CURLOPT_FRESH_CONNECT, true );
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
+        curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   
         // Set timeout options
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30 );
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30 );
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
   
         // Set references to certificate files
-        curl_setopt($ch, CURLOPT_CAINFO, $certs_file );
+        curl_setopt($ch, CURLOPT_CAINFO, $certs_file);
   
         // Check the existence of a common name in the SSL peer's certificate
         // and also verify that it matches the hostname provided
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2 );   
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
   
         // Verify the certificate of the SSL peer
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true );
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         
         // Build the parameters string to pass to PayWay
         $param_string = '';
         $init = true;
         
-        foreach($parameters as $key => $value) {
-            if($init)
-                $init = false; 
-            else
+        foreach ($parameters as $key => $value) {
+            if ($init) {
+                $init = false;
+            } else {
                 $param_string .= '&';
+            }
                 
             $param_string .= urlencode($key) . '=' . urlencode($value);
         }
@@ -248,7 +254,7 @@ class PayWayHandler extends PaymentHandler {
         // Check the response for errors
         $error_no = curl_errno($ch);
         
-        if($error_no != 0 ) {
+        if ($error_no != 0) {
             $errno = curl_errno($ch);
             $errstr = curl_error($ch);
             throw new Exception("cURL error: [$errno] $errstr");
@@ -259,15 +265,15 @@ class PayWayHandler extends PaymentHandler {
         // Split the response into parameters
         $response_params = array();
         
-        foreach(explode("&", $response_text) as $response_item ) {
+        foreach (explode("&", $response_text) as $response_item) {
             list($key, $value) = explode("=", $response_item, 2);
             $response_params[$key] = $value;
         }
 
-        if(array_key_exists('error', $response_params))
+        if (array_key_exists('error', $response_params)) {
             throw new Exception("Error getting token: " . $response_params['error']);
-        else
+        } else {
             return $response_params['token'];
+        }
     }
-
 }
