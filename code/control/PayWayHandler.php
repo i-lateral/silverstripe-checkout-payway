@@ -48,7 +48,8 @@ class PayWayHandler extends PaymentHandler {
         $return_url = Controller::join_links(
             Director::absoluteBaseURL(),
             Payment_Controller::config()->url_segment,
-            'complete'
+            'complete',
+            $order->OrderNumber
         );
 
         $back_url = Controller::join_links(
