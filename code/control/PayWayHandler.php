@@ -216,8 +216,9 @@ class PayWayHandler extends PaymentHandler
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
         curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
         curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);;
+        curl_setopt($ch, CURLOPT_SSLVERSION, 6);
+
         // Set timeout options
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
